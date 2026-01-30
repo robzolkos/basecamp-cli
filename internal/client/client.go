@@ -58,6 +58,37 @@ func (c *Client) Put(path string, data any) (json.RawMessage, error) {
 	return c.request(context.Background(), http.MethodPut, url, data)
 }
 
+func (c *Client) Delete(path string) (json.RawMessage, error) {
+	url := c.resolveURL(path)
+	return c.request(context.Background(), http.MethodDelete, url, nil)
+}
+
+// UploadFile uploads raw binary data to the given path
+func (c *Client) UploadFile(path string, data []byte, contentType string, size int64) (json.RawMessage, error) {
+	url := c.resolveURL(path)
+	return c.uploadRequest(context.Background(), url, data, contentType, size)
+}
+
+func (c *Client) uploadRequest(ctx context.Context, url string, data []byte, contentType string, size int64) (json.RawMessage, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("User-Agent", UserAgent)
+	req.Header.Set("Content-Type", contentType)
+	req.Header.Set("Content-Length", fmt.Sprintf("%d", size))
+
+	resp, err := c.http.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return c.handleResponse(resp)
+}
+
 // GetAll fetches all pages of a paginated endpoint and returns combined results
 func (c *Client) GetAll(path string) ([]json.RawMessage, error) {
 	var results []json.RawMessage

@@ -26,6 +26,9 @@ type Harness struct {
 	// CardID is a test card ID for read operations
 	CardID string
 
+	// TodolistID is a test todolist ID
+	TodolistID string
+
 	// t is the testing context
 	t *testing.T
 }
@@ -57,6 +60,7 @@ type Config struct {
 	ProjectID  string
 	BoardID    string
 	CardID     string
+	TodolistID string
 }
 
 // Exit codes
@@ -84,6 +88,7 @@ func LoadConfig() *Config {
 		ProjectID:  os.Getenv("BASECAMP_TEST_PROJECT_ID"),
 		BoardID:    os.Getenv("BASECAMP_TEST_BOARD_ID"),
 		CardID:     os.Getenv("BASECAMP_TEST_CARD_ID"),
+		TodolistID: os.Getenv("BASECAMP_TEST_TODOLIST_ID"),
 	}
 }
 
@@ -109,6 +114,7 @@ func New(t *testing.T) *Harness {
 		ProjectID:  cfg.ProjectID,
 		BoardID:    cfg.BoardID,
 		CardID:     cfg.CardID,
+		TodolistID: cfg.TodolistID,
 		t:          t,
 	}
 }

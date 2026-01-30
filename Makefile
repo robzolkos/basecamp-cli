@@ -18,11 +18,13 @@ help:
 	@echo "  BASECAMP_TEST_PROJECT_ID   Project ID to test against"
 	@echo "  BASECAMP_TEST_BOARD_ID     Board ID for card tests"
 	@echo "  BASECAMP_TEST_CARD_ID      Card ID for detail/move tests"
+	@echo "  BASECAMP_TEST_TODOLIST_ID  Todolist ID for todo tests"
 	@echo ""
 	@echo "Example:"
 	@echo "  export BASECAMP_TEST_PROJECT_ID=12345678"
 	@echo "  export BASECAMP_TEST_BOARD_ID=87654321"
 	@echo "  export BASECAMP_TEST_CARD_ID=44444444"
+	@echo "  export BASECAMP_TEST_TODOLIST_ID=99999999"
 	@echo "  make test-e2e"
 
 build:

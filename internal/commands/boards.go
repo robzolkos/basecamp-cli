@@ -49,27 +49,13 @@ func (c *BoardsCmd) Run(args []string) error {
 		return err
 	}
 
-	// Get project details
-	projectData, err := cl.Get("/projects/" + projectID + ".json")
+	project, err := fetchProject(cl, projectID)
 	if err != nil {
 		return err
 	}
 
-	var project ProjectDetail
-	if err := json.Unmarshal(projectData, &project); err != nil {
-		return err
-	}
-
-	// Find card table dock
-	var cardTableURL string
-	for _, dock := range project.Dock {
-		if dock.Name == "kanban_board" {
-			cardTableURL = dock.URL
-			break
-		}
-	}
-
-	if cardTableURL == "" {
+	cardTableURL, err := getDockURL(project, "kanban_board")
+	if err != nil {
 		return PrintJSON(map[string]any{
 			"project_id":   project.ID,
 			"project_name": project.Name,

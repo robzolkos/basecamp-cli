@@ -28,6 +28,7 @@ type CardDetail struct {
 	CommentsURL   string     `json:"comments_url"`
 	Creator       Creator    `json:"creator"`
 	Assignees     []Assignee `json:"assignees"`
+	Steps         []Step     `json:"steps"`
 }
 
 type Comment struct {
@@ -53,6 +54,7 @@ type CardDetailOutput struct {
 	URL         string          `json:"url"`
 	Assignees   []string        `json:"assignees,omitempty"`
 	Description string          `json:"description"`
+	Steps       []StepOutput    `json:"steps,omitempty"`
 	Comments    []CommentOutput `json:"comments,omitempty"`
 }
 
@@ -108,29 +110,30 @@ func (c *CardCmd) Run(args []string) error {
 		}
 	}
 
+	if len(card.Steps) > 0 {
+		output.Steps = make([]StepOutput, len(card.Steps))
+		for i, s := range card.Steps {
+			var assignees []string
+			for _, a := range s.Assignees {
+				assignees = append(assignees, a.Name)
+			}
+			output.Steps[i] = StepOutput{
+				ID:        s.ID,
+				Title:     s.Title,
+				Completed: s.Completed,
+				DueOn:     s.DueOn,
+				Position:  s.Position,
+				Assignees: assignees,
+			}
+		}
+	}
+
 	if showComments && card.CommentsCount > 0 {
-		commentsData, err := cl.GetAll(card.CommentsURL)
+		comments, err := fetchComments(cl, card.CommentsURL)
 		if err != nil {
 			return err
 		}
-
-		output.Comments = make([]CommentOutput, len(commentsData))
-		for i, commentJSON := range commentsData {
-			var comment Comment
-			if err := json.Unmarshal(commentJSON, &comment); err != nil {
-				return err
-			}
-			author := "Unknown"
-			if comment.Creator.Name != "" {
-				author = comment.Creator.Name
-			}
-			output.Comments[i] = CommentOutput{
-				ID:        comment.ID,
-				Author:    author,
-				Content:   stripHTML(comment.Content),
-				CreatedAt: comment.CreatedAt,
-			}
-		}
+		output.Comments = comments
 	}
 
 	return PrintJSON(output)
