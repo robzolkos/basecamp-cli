@@ -30,11 +30,35 @@ make build
 
 ## Setup
 
-1. Create a Basecamp OAuth app at https://launchpad.37signals.com/integrations
-2. Run `basecamp init` to configure credentials
-3. Run `basecamp auth` to authenticate
+### Prerequisites
 
-Configuration files (XDG Base Directory):
+During OAuth authentication, Basecamp redirects to your computer on **port 3002**. Your machine must be accessible via a URL for this to work. Use a service like:
+
+- [Tailscale](https://tailscale.com/) - Recommended for persistent access
+- [ngrok](https://ngrok.com/) - Quick setup for temporary access
+- Any reverse proxy that exposes localhost:3002
+
+### Registration
+
+1. Start your tunnel service and note the public URL (e.g., `https://myhost.tailscale.ts.net`)
+
+2. Run the registration helper to generate your OAuth app values:
+
+```bash
+basecamp register
+```
+
+This will ask for your application details and output the exact values to enter in the Basecamp registration form, including the correct redirect URI.
+
+3. Visit https://launchpad.37signals.com/integrations and register your app using the generated values
+
+4. Run `basecamp init` to configure your credentials (Client ID, Client Secret, and the same Redirect URI)
+
+5. Run `basecamp auth` to authenticate (ensure your tunnel is running on port 3002)
+
+### Configuration Files
+
+Configuration follows XDG Base Directory specification:
 - `~/.config/basecamp/config.json` - client credentials
 - `~/.local/share/basecamp/token.json` - OAuth token
 
@@ -349,6 +373,14 @@ basecamp card 44444444       # just need card_id
 ```
 
 The CLI searches current directory and parent directories for `.basecamp.yml`.
+
+## Agent Skills
+
+Install the Basecamp skill for AI coding agents (Claude Code, OpenCode, and others):
+
+```bash
+npx skills add robzolkos/basecamp-cli
+```
 
 ## Output
 

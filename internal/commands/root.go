@@ -14,6 +14,7 @@ type Command interface {
 }
 
 var commands = map[string]func() Command{
+	"register":              func() Command { return &RegisterCmd{} },
 	"init":                  func() Command { return &InitCmd{} },
 	"auth":                  func() Command { return &AuthCmd{} },
 	"projects":              func() Command { return &ProjectsCmd{} },
@@ -115,6 +116,7 @@ func printHelp(version string) {
 Usage: basecamp <command> [arguments] [flags]
 
 Commands:
+  register                          Generate OAuth app registration values
   init                              Configure credentials
   auth                              Authenticate with OAuth
   projects                          List all projects
