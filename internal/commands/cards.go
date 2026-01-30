@@ -8,6 +8,8 @@ import (
 	"github.com/rzolkos/basecamp-cli/internal/client"
 )
 
+var errBoardIDRequired = errors.New("usage: basecamp cards [project_id] <board_id> [--column <name>]")
+
 type CardsCmd struct{}
 
 type ColumnDetail struct {
@@ -51,16 +53,20 @@ type CardsOutput struct {
 }
 
 func (c *CardsCmd) Run(args []string) error {
-	if len(args) < 2 {
-		return errors.New("usage: basecamp cards <project_id> <board_id> [--column <name>]")
+	projectID, remaining, err := getProjectID(args)
+	if err != nil {
+		return err
 	}
-	projectID := args[0]
-	boardID := args[1]
+
+	if len(remaining) < 1 {
+		return errBoardIDRequired
+	}
+	boardID := remaining[0]
 
 	var columnFilter string
-	for i := 2; i < len(args); i++ {
-		if args[i] == "--column" && i+1 < len(args) {
-			columnFilter = args[i+1]
+	for i := 1; i < len(remaining); i++ {
+		if remaining[i] == "--column" && i+1 < len(remaining) {
+			columnFilter = remaining[i+1]
 			break
 		}
 	}

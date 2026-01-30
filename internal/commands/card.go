@@ -57,14 +57,18 @@ type CardDetailOutput struct {
 }
 
 func (c *CardCmd) Run(args []string) error {
-	if len(args) < 2 {
-		return errors.New("usage: basecamp card <project_id> <card_id> [--comments]")
+	projectID, remaining, err := getProjectID(args)
+	if err != nil {
+		return err
 	}
-	projectID := args[0]
-	cardID := args[1]
+
+	if len(remaining) < 1 {
+		return errors.New("usage: basecamp card [project_id] <card_id> [--comments]")
+	}
+	cardID := remaining[0]
 
 	showComments := false
-	for _, arg := range args[2:] {
+	for _, arg := range remaining[1:] {
 		if arg == "--comments" {
 			showComments = true
 			break

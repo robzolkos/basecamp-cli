@@ -22,17 +22,21 @@ type CardTableForMove struct {
 }
 
 func (c *MoveCmd) Run(args []string) error {
-	if len(args) < 3 {
-		return errors.New("usage: basecamp move <project_id> <board_id> <card_id> --to <column>")
+	projectID, remaining, err := getProjectID(args)
+	if err != nil {
+		return err
 	}
-	projectID := args[0]
-	boardID := args[1]
-	cardID := args[2]
+
+	if len(remaining) < 2 {
+		return errors.New("usage: basecamp move [project_id] <board_id> <card_id> --to <column>")
+	}
+	boardID := remaining[0]
+	cardID := remaining[1]
 
 	var targetColumn string
-	for i := 3; i < len(args); i++ {
-		if args[i] == "--to" && i+1 < len(args) {
-			targetColumn = args[i+1]
+	for i := 2; i < len(remaining); i++ {
+		if remaining[i] == "--to" && i+1 < len(remaining) {
+			targetColumn = remaining[i+1]
 			break
 		}
 	}

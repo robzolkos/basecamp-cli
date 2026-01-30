@@ -175,6 +175,25 @@ basecamp init   # Configure client_id, client_secret, account_id
 basecamp auth   # Authenticate via OAuth
 ```
 
+## Project-specific config
+
+Create `.basecamp.yml` in your project directory to set a default project:
+
+```yaml
+project_id: 12345678
+```
+
+The CLI searches current directory and parents, so you can:
+- Put it in your repo root for per-project defaults
+- Omit project_id from commands when in that directory
+
+```bash
+# With .basecamp.yml in current or parent directory:
+basecamp boards              # no project_id needed
+basecamp cards 87654321      # just board_id
+basecamp card 44444444       # just card_id
+```
+
 ## Error handling
 
 Errors are returned as JSON on stderr:

@@ -2,7 +2,6 @@ package commands
 
 import (
 	"encoding/json"
-	"errors"
 
 	"github.com/rzolkos/basecamp-cli/internal/client"
 )
@@ -40,10 +39,10 @@ type BoardOutput struct {
 }
 
 func (c *BoardsCmd) Run(args []string) error {
-	if len(args) < 1 {
-		return errors.New("usage: basecamp boards <project_id>")
+	projectID, _, err := getProjectID(args)
+	if err != nil {
+		return err
 	}
-	projectID := args[0]
 
 	cl, err := client.New()
 	if err != nil {

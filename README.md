@@ -49,6 +49,24 @@ basecamp card <project_id> <card_id> --comments
 basecamp move <project_id> <board_id> <card_id> --to "Done"
 ```
 
+## Project-specific config
+
+Create `.basecamp.yml` in your project directory to set a default project_id:
+
+```yaml
+project_id: 12345678
+```
+
+Then omit project_id from commands:
+
+```bash
+basecamp boards              # uses project_id from .basecamp.yml
+basecamp cards 87654321      # just need board_id
+basecamp card 44444444       # just need card_id
+```
+
+The CLI searches current directory and parent directories for `.basecamp.yml`.
+
 ## Output
 
 All commands output JSON for easy parsing with `jq`:
